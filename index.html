@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiny - Chúc mừng 20/10</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000000;
+      font-family: 'Courier New', Courier, monospace;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    /* Bầu trời sao nền lung linh */
+    #tiny-sky {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1.6s ease-in-out, visibility 1.6s;
+    }
+    #tiny-sky.hien-thi {
+      opacity: 1;
+      visibility: visible;
+    }
+    .tiny-star {
+      position: absolute;
+      width: var(--size);
+      height: var(--size);
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 6px 1px rgba(220, 244, 255, .65);
+      animation: tinyTwinkle var(--twinkle) ease-in-out var(--delay) infinite alternate;
+    }
+    @keyframes tinyTwinkle {
+      from { opacity: .18; transform: scale(.65); }
+      to { opacity: .95; transform: scale(1.25); }
+    }
+
+    /* Sao băng */
+    .tiny-meteor {
+      position: absolute;
+      width: 100px;
+      height: 2px;
+      opacity: 0;
+      background: linear-gradient(to right, rgba(255,255,255,.98) 0%, rgba(130,200,255,0) 100%);
+      transform: rotate(-25deg);
+      animation: tinyMeteor 4s linear infinite;
+    }
+    @keyframes tinyMeteor {
+      0% { opacity: 0; transform: translate(0, 0) rotate(-25deg); }
+      20% { opacity: 1; }
+      40% { opacity: 0; transform: translate(-300px, 300px) rotate(-25deg); }
+      100% { opacity: 0; }
+    }
+
+    /* HỆ THỐNG NỀN CHUYỂN MÀU NỀN MƯỢT MÀ */
+    .bg-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      transition: opacity 2s ease-in-out;
+    }
+
+    /* LỚP PHỦ MƯA ICON ĐẰNG SAU */
+    #floating-icons-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .floating-icon {
+      position: absolute;
+      font-size: var(--icon-size);
+      opacity: 0;
+      animation: floatRandomvar var(--float-duration) ease-in-out infinite var(--float-delay);
+      user-select: none;
+    }
+    @keyframes floatRandomvar {
+      0% {
+        transform: translate(0, 0) scale(0.6) rotate(0deg);
+        opacity: 0;
+      }
+      25% {
+        opacity: var(--icon-opacity);
+      }
+      50% {
+        transform: translate(var(--move-x), var(--move-y)) scale(1.1) rotate(180deg);
+        opacity: var(--icon-opacity);
+      }
+      75% {
+        opacity: var(--icon-opacity);
+      }
+      100% {
+        transform: translate(calc(var(--move-x) * 1.5), calc(var(--move-y) * 1.5)) scale(0.7) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Ảnh nền minh họa góc phải */
+    #bg-image-container {
+      position: absolute;
+      bottom: 0;
+      right: 2vw;
+      height: 80vh;
+      width: 45vw;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1.2s ease-in-out, transform 1.2s ease-out;
+    }
+    #bg-image-container.hien-thi {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #bg-image-aura {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 180, 220, 0.45) 0%, rgba(0, 243, 255, 0.2) 50%, rgba(0,0,0,0) 75%);
+      filter: blur(25px);
+      animation: auraGlow 3s infinite alternate ease-in-out;
+    }
+    #bg-image {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: bottom right;
+      z-index: 2;
+      filter: drop-shadow(0 0 15px rgba(255, 200, 255, 0.6));
+    }
+
+    /* MÁY BAY BAY NGANG MÀN HÌNH */
+    #airplane-container {
+      position: absolute;
+      z-index: 25;
+      font-size: 80px;
+      pointer-events: none;
+      opacity: 0;
+    }
+    #airplane-container.fly-pass-1 {
+      animation: flyHorizontalLeftToRight 2.2s forwards linear;
+    }
+    #airplane-container.fly-pass-2 {
+      animation: flyHorizontalRightToLeft 2.2s forwards linear;
+    }
+    #airplane-container.fly-drop {
+      animation: flyHorizontalLeftToRight 2.5s forwards linear;
+    }
+
+    @keyframes flyHorizontalLeftToRight {
+      0% { opacity: 1; transform: translate(-150px, 0) scale(0.8) rotate(0deg); }
+      50% { opacity: 1; transform: translate(50vw, 0px) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translate(110vw, 0px) scale(1.1) rotate(0deg); }
+    }
+
+    @keyframes flyHorizontalRightToLeft {
+      0% { opacity: 1; transform: translate(110vw, 0) scale(0.8) rotate(180deg); }
+      50% { opacity: 1; transform: translate(50vw, 0px) scale(1) rotate(180deg); }
+      100% { opacity: 0; transform: translate(-150px, 0px) scale(1.1) rotate(180deg); }
+    }
+
+    /* KHUNG VIỀN LED XANH CHỨA ẢNH TỔNG HỢP */
+    #class-photo-container {
+      position: absolute;
+      z-index: 30;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.1);
+      width: 86vw;
+      height: 76vh;
+      max-width: 1100px;
+      max-height: 640px;
+      background: rgba(8, 8, 16, 0.98);
+      border: 3px solid #00f3ff;
+      border-radius: 16px;
+      box-shadow: 0 0 35px rgba(0, 243, 255, 0.85), inset 0 0 20px rgba(0, 243, 255, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transition: none;
+    }
+    #class-photo-container.hien-thi {
+      opacity: 1;
+      visibility: visible;
+      animation: dropAndZoomIn 1.2s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes dropAndZoomIn {
+      0% {
+        transform: translate(-50%, -120vh) scale(0.1) rotate(-8deg);
+        opacity: 0;
+      }
+      60% {
+        opacity: 1;
+        transform: translate(-50%, -49%) scale(1.03) rotate(2deg);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    /* TIÊU ĐỀ PHÍA TRÊN */
+    .photo-title-banner {
+      width: 100%;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #00f3ff;
+      text-shadow: 0 0 10px #00f3ff, 0 0 20px rgba(255,0,127,0.7);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+      animation: bannerGlow 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes bannerGlow {
+      from { opacity: 0.8; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1.02); }
+    }
+
+    /* KHUNG HIỂN THỊ TRỌN VẸN ẢNH TỔNG HỢP */
+    .single-photo-wrapper {
+      position: relative;
+      width: 100%;
+      height: calc(100% - 35px);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      background-color: #05050a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .single-photo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .single-photo-wrapper:hover img {
+      transform: scale(1.02);
+    }
+
+    /* BIỂU TƯỢNG TRUNG TÂM PHÁT SÁNG (AURA) */
+    .element-wrapper {
+      position: absolute;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 180px;
+      height: 180px;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.6s ease-in-out, left 0.6s ease-in-out;
+      z-index: 6;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .element-wrapper.hien-thi {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .element-wrapper.fade-out {
+      opacity: 0 !important;
+      transform: translate(-50%, -50%) scale(0.7) !important;
+    }
+
+    .aura-clover {
+      position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 255, 136, 0.65) 0%, rgba(0, 180, 80, 0.25) 55%, rgba(0,0,0,0) 75%);
+      filter: blur(20px); animation: auraPulse 2s infinite alternate ease-in-out;
+    }
+    .aura-star {
+      position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 220, 0, 0.7) 0%, rgba(255, 140, 0, 0.3) 55%, rgba(0,0,0,0) 75%);
+      filter: blur(22px); animation: auraRotate 4s infinite linear;
+    }
+    .aura-heart {
+      position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 50, 120, 0.75) 0%, rgba(200, 0, 80, 0.3) 55%, rgba(0,0,0,0) 75%);
+      filter: blur(20px); animation: auraHeartbeat 1.2s infinite alternate ease-in-out;
+    }
+    .aura-flower {
+      position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 150, 200, 0.7) 0%, rgba(180, 80, 220, 0.3) 55%, rgba(0,0,0,0) 75%);
+      filter: blur(22px); animation: auraPulse 2.5s infinite alternate ease-in-out;
+    }
+    .aura-gold {
+      position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(255, 165, 0, 0.35) 55%, rgba(0,0,0,0) 75%);
+      filter: blur(22px); animation: auraPulse 1.8s infinite alternate ease-in-out;
+    }
+    .aura-rainbow {
+      position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.6) 0%, rgba(255, 0, 128, 0.4) 50%, rgba(0,0,0,0) 75%);
+      filter: blur(25px); animation: auraRotate 3s infinite linear;
+    }
+    .aura-purple {
+      position: absolute; width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, rgba(180, 80, 255, 0.75) 0%, rgba(100, 0, 200, 0.3) 55%, rgba(0,0,0,0) 75%);
+      filter: blur(20px); animation: auraPulse 2s infinite alternate ease-in-out;
+    }
+
+    @keyframes auraPulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      100% { transform: scale(1.15); opacity: 1; }
+    }
+    @keyframes auraRotate {
+      0% { transform: rotate(0deg) scale(0.95); opacity: 0.8; }
+      50% { transform: rotate(180deg) scale(1.1); opacity: 1; }
+      100% { transform: rotate(360deg) scale(0.95); opacity: 0.8; }
+    }
+    @keyframes auraHeartbeat {
+      0% { transform: scale(0.88); opacity: 0.75; }
+      100% { transform: scale(1.18); opacity: 1; }
+    }
+    @keyframes auraGlow {
+      0% { opacity: 0.6; transform: scale(0.95); }
+      100% { opacity: 0.95; transform: scale(1.05); }
+    }
+
+    .custom-icon {
+      position: relative;
+      font-size: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+      user-select: none;
+    }
+
+    .bounce-icon {
+      animation: iconBounce 1.5s infinite ease-in-out;
+    }
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-12px) scale(1.08); }
+    }
+
+    #big-clover {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      z-index: 2;
+    }
+    .clover-leaf {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #00ff88, #00cc55);
+      border-radius: 50% 50% 20% 50%;
+      box-shadow: 0 0 25px rgba(0, 255, 128, 0.9);
+    }
+    .clover-leaf:nth-child(1) { top: 8px; left: 38px; transform: rotate(-45deg); }
+    .clover-leaf:nth-child(2) { top: 38px; left: 68px; transform: rotate(45deg); }
+    .clover-leaf:nth-child(3) { top: 68px; left: 38px; transform: rotate(135deg); }
+    .clover-leaf:nth-child(4) { top: 38px; left: 8px; transform: rotate(225deg); }
+    .clover-stem {
+      position: absolute;
+      bottom: -2px;
+      left: 65px;
+      width: 5px;
+      height: 45px;
+      background: #00aa44;
+      border-radius: 4px;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .text-box {
+      position: absolute;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(0, 243, 255, 0.6);
+      max-width: 480px;
+      line-height: 1.5;
+      padding: 0 15px;
+      z-index: 10;
+      transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .text-box.zoom-center {
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) scale(1.4) !important;
+      max-width: 750px;
+      text-align: center;
+      font-size: 28px;
+      text-shadow: 0 0 25px rgba(255, 119, 170, 0.9), 0 0 50px rgba(0, 243, 255, 0.8);
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 20px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.4);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .face-container {
+      display: flex;
+      gap: 30px;
+      position: absolute;
+      align-items: center;
+      justify-content: center;
+      height: 150px;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 5;
+    }
+
+    /* ĐÔI MẮT MÀU GRADIENT PHA TRỘN MƯỢT MÀ */
+    .eye {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #ff007f 0%, #7928ca 35%, #00dfd8 100%);
+      border-radius: 40px;
+      box-shadow: 0 0 40px rgba(255, 0, 127, 0.5), 0 0 80px rgba(0, 223, 216, 0.4), inset 0 0 35px rgba(255, 255, 255, 0.85);
+      transition: background 1.5s ease-in-out, box-shadow 1.5s ease-in-out, width 0.4s ease, height 0.4s ease, border-radius 0.4s ease, transform 0.3s ease;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+    }
+
+    .blush {
+      position: absolute;
+      bottom: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      font-size: 22px;
+      font-weight: 900;
+      color: #ff4d88;
+      text-shadow: 0 0 10px #ff3377, 0 0 20px #ff3377;
+      letter-spacing: 6px;
+      font-family: Arial, sans-serif;
+      user-select: none;
+      animation: blushGlow 0.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes blushGlow {
+      0% { opacity: 0.7; transform: translateX(-50%) scale(0.95); }
+      100% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+    }
+
+    .eye.shy-animation {
+      animation: shyShake 1s infinite ease-in-out;
+    }
+
+    @keyframes shyShake {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(4px) rotate(-4deg); }
+      75% { transform: translateY(-3px) rotate(4deg); }
+    }
+
+    .eye.blink {
+      height: 12px !important;
+      border-radius: 6px !important;
+      box-shadow: 0 0 20px currentcolor;
+    }
+
+    /* TRẠNG THÁI MẮT GRADIENT CỰC RỰC RỠ */
+    .eye.happy {
+      height: 110px;
+      border-radius: 55px 55px 25px 25px;
+      background: linear-gradient(135deg, #00c6ff 0%, #0072ff 50%, #00ffaa 100%);
+      box-shadow: 0 0 45px rgba(0, 198, 255, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+
+    .eye.blush-state {
+      background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 50%, #ff007f 100%);
+      box-shadow: 0 0 45px rgba(255, 117, 140, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+
+    .eye.star {
+      background: linear-gradient(135deg, #f7ff00 0%, #db36a4 50%, #7928ca 100%);
+      box-shadow: 0 0 45px rgba(247, 255, 0, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+    .eye.star::after {
+      content: '★';
+      font-size: 80px;
+      color: #ffffff;
+      text-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff;
+      animation: starSpin 3s infinite linear;
+    }
+    @keyframes starSpin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.12); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .eye.heart {
+      background: linear-gradient(135deg, #ff0844 0%, #ffb199 50%, #ff3366 100%);
+      box-shadow: 0 0 45px rgba(255, 8, 68, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+    .eye.heart::after {
+      content: '❤️';
+      font-size: 70px;
+      animation: heartBeat 0.8s infinite alternate ease-in-out;
+    }
+    @keyframes heartBeat {
+      0% { transform: scale(0.9); }
+      100% { transform: scale(1.18); }
+    }
+
+    .eye.wink-left {
+      height: 90px;
+      border-radius: 65px 65px 16px 16px;
+      background: linear-gradient(135deg, #b224ef 0%, #7579ff 50%, #00d2ff 100%);
+      box-shadow: 0 0 45px rgba(178, 36, 239, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+
+    .eye.surprised {
+      width: 165px;
+      height: 165px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f12711 0%, #f5af19 50%, #ff007f 100%);
+      box-shadow: 0 0 50px rgba(241, 39, 17, 0.7), inset 0 0 35px rgba(255, 255, 255, 0.9);
+    }
+
+    .eye.dizzy {
+      background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 50%, #ff007f 100%);
+      box-shadow: 0 0 45px rgba(78, 84, 200, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+    .eye.dizzy::after {
+      content: '🌀';
+      font-size: 75px;
+      animation: dizzySpin 1.5s infinite linear;
+    }
+    @keyframes dizzySpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .eye.sparkle {
+      background: linear-gradient(135deg, #ffe000 0%, #799f0c 50%, #00dfd8 100%);
+      box-shadow: 0 0 45px rgba(255, 224, 0, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+    .eye.sparkle::after {
+      content: '✨';
+      font-size: 75px;
+      animation: sparkleGlow 1s infinite alternate ease-in-out;
+    }
+    @keyframes sparkleGlow {
+      0% { transform: scale(0.8); opacity: 0.6; }
+      100% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .eye.cool {
+      background: linear-gradient(135deg, #0ba360 0%, #3cba92 50%, #00f2fe 100%);
+      box-shadow: 0 0 45px rgba(11, 163, 96, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+    .eye.cool::after {
+      content: '🕶️';
+      font-size: 85px;
+    }
+
+    .eye.fire {
+      background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 50%, #f7b733 100%);
+      box-shadow: 0 0 45px rgba(255, 65, 108, 0.6), inset 0 0 35px rgba(255, 255, 255, 0.85);
+    }
+    .eye.fire::after {
+      content: '🔥';
+      font-size: 75px;
+      animation: fireFlicker 0.6s infinite alternate ease-in-out;
+    }
+    @keyframes fireFlicker {
+      0% { transform: scale(0.9) translateY(0); }
+      100% { transform: scale(1.15) translateY(-5px); }
+    }
+
+    #start-btn {
+      position: absolute;
+      z-index: 100;
+      padding: 16px 34px;
+      font-size: 20px;
+      background-color: #00f3ff;
+      color: #000;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 20px #00f3ff;
+      transition: transform 0.2s;
+    }
+
+    #start-btn:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <button id="start-btn">Nhấn vào đây để xem ❤️</button>
+
+  <div id="tiny-sky"></div>
+  <div id="floating-icons-bg"></div>
+  
+  <div id="bg-layer-1" class="bg-layer" style="opacity: 1;"></div>
+  <div id="bg-layer-2" class="bg-layer" style="opacity: 0;"></div>
+  
+  <div id="bg-image-container">
+    <div id="bg-image-aura"></div>
+    <div id="bg-image"></div>
+  </div>
+  
+  <div class="element-wrapper" id="dynamic-element-wrapper">
+    <div id="dynamic-aura" class="aura-clover"></div>
+    <div id="dynamic-content"></div>
+  </div>
+
+  <!-- MÁY BAY CHUYỂN ĐỘNG -->
+  <div id="airplane-container">✈️</div>
+
+  <!-- KHUNG ẢNH CHỨA 1 ẢNH TỔNG HỢP VỚI TIÊU ĐỀ TẬP THỂ 9.11 MÃI ĐỈNH -->
+  <div id="class-photo-container">
+    <div class="photo-title-banner">✨ TẬP THỂ 9.11 MÃI ĐỈNH ✨</div>
+    <div class="single-photo-wrapper">
+      <img src="anh1.png" alt="Ảnh tập thể 9.11">
+    </div>
+  </div>
+
+  <div class="container" id="main-content" style="display: none;">
+    <div class="text-box" id="text-display"></div>
+    
+    <div class="face-container" id="face-container">
+      <div class="eye left" id="eye-left">
+        <div class="blush" id="blush-left">////</div>
+      </div>
+      <div class="eye right" id="eye-right">
+        <div class="blush" id="blush-right">////</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint-text" style="display: none;">(Click chuột bất kỳ đâu để tiếp tục...)</div>
+
+  <script>
+    const skyContainer = document.getElementById('tiny-sky');
+    for (let i = 0; i < 60; i++) {
+      const star = document.createElement('div');
+      star.className = 'tiny-star';
+      star.style.setProperty('--size', `${Math.random() * 3 + 1}px`);
+      star.style.setProperty('--twinkle', `${Math.random() * 3 + 2}s`);
+      star.style.setProperty('--delay', `${Math.random() * 5}s`);
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      skyContainer.appendChild(star);
+    }
+
+    for (let j = 0; j < 3; j++) {
+      const meteor = document.createElement('div');
+      meteor.className = 'tiny-meteor';
+      meteor.style.top = `${Math.random() * 50}%`;
+      meteor.style.left = `${Math.random() * 80 + 20}%`;
+      meteor.style.animationDelay = `${j * 3}s`;
+      skyContainer.appendChild(meteor);
+    }
+
+    // KHỞI TẠO ĐÚNG 7 FILE ÂM THANH TRONG THƯ MỤC
+    const audio1 = new Audio('nhac1.mp3');
+    const audio2 = new Audio('nhac2.mp3');
+    const audio3 = new Audio('nhac3.mp3');
+    const audio4 = new Audio('nhac4.mp3');
+    const audio5 = new Audio('nhac5.mp3');
+    const audio6 = new Audio('nhac6.mp3');
+    const audio7 = new Audio('nhac7.mp3');
+
+    // CƠ CHẾ CHUỖI NỐI TIẾP MƯỢT MÀ 7 FILE NHẠC
+    audio1.addEventListener('ended', () => {
+      audio2.currentTime = 0;
+      audio2.play().catch(e => console.log(e));
+    });
+
+    audio2.addEventListener('ended', () => {
+      audio3.currentTime = 0;
+      audio3.play().catch(e => console.log(e));
+    });
+
+    audio3.addEventListener('ended', () => {
+      audio4.currentTime = 0;
+      audio4.play().catch(e => console.log(e));
+    });
+
+    audio4.addEventListener('ended', () => {
+      audio5.currentTime = 0;
+      audio5.play().catch(e => console.log(e));
+    });
+
+    audio5.addEventListener('ended', () => {
+      audio6.currentTime = 0;
+      audio6.play().catch(e => console.log(e));
+    });
+
+    audio6.addEventListener('ended', () => {
+      audio7.currentTime = 0;
+      audio7.play().catch(e => console.log(e));
+    });
+
+    const iconThemes = {
+      default: ["✨", "💫", "⭐", "🌟", "☁️", "🎈", "🎉", "🔮", "🌙", "☄️", "🪄", "🎀"],
+      love: ["❤️", "💖", "💕", "💗", "💓", "💘", "💝", "💞", "💌", "❣️", "🌹", "🌺", "🎀", "✨"],
+      flower: ["🌸", "🌺", "🌷", "🌻", "🌼", "💐", "🌹", "🪷", "🥀", "🌾", "🌿", "🍃", "🎀", "✨"],
+      clover: ["🍀", "🌿", "🌱", "☘️", "🍃", "💚", "🟢", "🌵", "🌴", "🌲", "🍀", "✨"],
+      star: ["★", "⭐", "🌟", "💫", "✨", "🔥", "💥", "⚡", "🔮", "🎇", "🎆", "✨"]
+    };
+
+    function spawnFloatingIcons(themeKey = "default", pos = "top") {
+      const container = document.getElementById('floating-icons-bg');
+      container.innerHTML = ""; 
+      const iconsArray = iconThemes[themeKey] || iconThemes.default;
+
+      let forbiddenXMin = 25, forbiddenXMax = 75;
+      let forbiddenYMin = 10, forbiddenYMax = 35;
+
+      if (pos === "top") {
+        forbiddenYMin = 8; forbiddenYMax = 35;
+        forbiddenXMin = 20; forbiddenXMax = 80;
+      } else if (pos === "bottom") {
+        forbiddenYMin = 65; forbiddenYMax = 90;
+        forbiddenXMin = 20; forbiddenXMax = 80;
+      } else if (pos === "left") {
+        forbiddenYMin = 25; forbiddenYMax = 75;
+        forbiddenXMin = 5; forbiddenXMax = 45;
+      } else if (pos === "right") {
+        forbiddenYMin = 25; forbiddenYMax = 75;
+        forbiddenXMin = 55; forbiddenXMax = 95;
+      }
+
+      for (let k = 0; k < 35; k++) {
+        let posX, posY;
+        let attempts = 0;
+
+        do {
+          posX = Math.random() * 92 + 4;
+          posY = Math.random() * 90 + 5;
+          attempts++;
+        } while (
+          posX >= forbiddenXMin && posX <= forbiddenXMax &&
+          posY >= forbiddenYMin && posY <= forbiddenYMax &&
+          attempts < 50
+        );
+
+        const span = document.createElement('span');
+        span.className = 'floating-icon';
+        span.innerText = iconsArray[Math.floor(Math.random() * iconsArray.length)];
+        
+        span.style.left = `${posX}%`;
+        span.style.top = `${posY}%`;
+        span.style.setProperty('--icon-size', `${Math.random() * 22 + 16}px`);
+        span.style.setProperty('--icon-opacity', `${Math.random() * 0.45 + 0.25}`);
+        
+        const moveX = `${(Math.random() - 0.5) * 80}px`;
+        const moveY = `${(Math.random() - 0.5) * 80}px`;
+        span.style.setProperty('--move-x', moveX);
+        span.style.setProperty('--move-y', moveY);
+
+        span.style.setProperty('--float-duration', `${Math.random() * 4 + 4}s`);
+        span.style.setProperty('--float-delay', `${Math.random() * 3}s`);
+        
+        container.appendChild(span);
+      }
+    }
+
+    const script = [
+      // PHẦN 1 (Tốc độ gõ chữ: 32ms)
+      { text: "Hèm... Tôi là Tiny đây. Đứng nghiêm chỉnh lại nào các tiểu thư 🤖😎✨", bg: "radial-gradient(circle, #15002b 0%, #050505 100%)", eyeState: "cool", track: 1, pos: "top", showSky: false, showElement: "big-crown", iconTheme: "star" },
+      { text: "Hôm nay tôi nhận được hợp đồng đặc biệt từ hội quý tử 9.11... 📋💳😏", bg: "radial-gradient(circle, #001e2b 0%, #050505 100%)", eyeState: "surprised", track: 1, pos: "bottom", showSky: false, showElement: "big-contract", iconTheme: "default" },
+      { text: "Bảo tôi qua xem các cô thế nào... Nhìn kĩ thì công nhận cũng cuốn phết đấy 😳✨", bg: "radial-gradient(circle, #3d001e 0%, #050505 100%)", eyeState: "blush", track: 1, pos: "top", showSky: false, showElement: "big-flushed", iconTheme: "love" },
+      { text: "Hôm nay thần thái rạng rỡ quá nhỉ, làm tôi suýt chút nữa là trật nhịp rồi 🌸✨💖", bg: "radial-gradient(circle, #2e003d 0%, #050505 100%)", eyeState: "sparkle", track: 1, pos: "left", showSky: false, showElement: "big-flower", iconTheme: "flower" },
+      { text: "Nói cho mà biết, hôm nay là 20/10 rồi đấy ngày của các quý cô đóa 📅🌷", bg: "radial-gradient(circle, #002e1a 0%, #050505 100%)", eyeState: "wink", track: 1, pos: "right", showSky: false, showElement: "big-calendar", iconTheme: "flower" },
+      { text: "Nên tôi mới dành thời gian quý báu ngoi lên đây chúc các cô vài câu nha ☁️✨", bg: "radial-gradient(circle, #001f3d 0%, #050505 100%)", eyeState: "happy", track: 1, pos: "top", showSky: true, showElement: "big-cloud", iconTheme: "default" },
+      
+      // PHẦN 2 (Tốc độ gõ chữ: 60ms)
+      { text: "Trật tự nghe cho rõ này, tôi chỉ nói một lần duy nhất thôi đấy... 💭💕", bg: "radial-gradient(circle, #3d000f 0%, #050505 100%)", eyeState: "fire", track: 2, pos: "top", showSky: true, showElement: "big-speech", iconTheme: "star" },
+      { text: "Đầu tiên, cấm các cô được ốm, phải ăn ngon ngủ ngon và giữ gìn sức khỏe nhé 🌿💪🏻❤️", bg: "radial-gradient(circle, #0b3d00 0%, #050505 100%)", eyeState: "happy", track: 2, pos: "bottom", showSky: false, showElement: "big-strong", iconTheme: "love" },
+      { text: "Lúc nào cũng phải giữ cái thần thái xinh xắn, rạng rỡ như những nàng công chúa nha 🌺👑✨", bg: "radial-gradient(circle, #2b002b 0%, #050505 100%)", eyeState: "heart", track: 2, pos: "left", showSky: false, showElement: "big-princess", iconTheme: "flower" },
+      { text: "Mong rằng mỗi sớm mai thức dậy, thế giới này đều mỉm cười và mang đến cho các cô vô vàn điều tốt đẹp 🌅☕✨", bg: "radial-gradient(circle, #3d2200 0%, #050505 100%)", eyeState: "dizzy", track: 2, pos: "top", showSky: true, showElement: "big-sun", iconTheme: "star" },
+      { text: "Dù bài tập có chất đống hay áp lực có đè nặng thế nào, thì nụ cười đắt giá ấy vẫn phải luôn nở trên môi nha 😄🍬💖", bg: "radial-gradient(circle, #3d002e 0%, #050505 100%)", eyeState: "blush", track: 2, pos: "bottom", showSky: false, showElement: "big-candy", iconTheme: "love" },
+      { text: "Nhớ lấy một điều, phía sau các cô luôn có một chỗ dựa và hậu thuẫn cực kỳ vững chắc đấy 🤗🌻✨", bg: "radial-gradient(circle, #00333d 0%, #050505 100%)", eyeState: "sparkle", track: 2, pos: "left", showSky: true, showElement: "big-shield", iconTheme: "clover" },
+      
+      { text: "Bật mí nhỏ nè, nhánh cỏ 4 lá với món quà đặc quyền này, tôi đã cất công chuẩn bị riêng cho các cô đấy 🍀🎁✨", bg: "radial-gradient(circle, #003d1a 0%, #050505 100%)", eyeState: "star", track: 2, pos: "bottom", showSky: false, showElement: "big-gift", iconTheme: "clover" },
+      { text: "Cầm lấy đi này, đừng có mà ngại ngùng hay từ chối với tôi nha 🤲🏻🍀💚", bg: "radial-gradient(circle, #113d00 0%, #050505 100%)", eyeState: "wink", track: 2, pos: "bottom", showSky: false, showElement: "big-palms", iconTheme: "clover" },
+      { text: "Chiếc lá thứ nhất trao gửi cho các cô Niềm Tin tuyệt đối vào bản thân 🌿✨", bg: "radial-gradient(circle, #002e1a 0%, #050505 100%)", eyeState: "happy", track: 2, pos: "bottom", showSky: false, showElement: "big-sprout", iconTheme: "clover" },
+      { text: "Chiếc lá thứ hai đại diện cho những Hy Vọng rực rỡ ở tương lai phía trước 🌟✨", bg: "radial-gradient(circle, #00293d 0%, #050505 100%)", eyeState: "star", track: 2, pos: "bottom", showSky: false, showElement: "big-star", iconTheme: "clover" },
+      { text: "Chiếc lá thứ ba xin dành trọn vẹn cho Tình Yêu Thương và sự ấm áp 💕✨", bg: "radial-gradient(circle, #3d001a 0%, #050505 100%)", eyeState: "heart", track: 2, pos: "bottom", showSky: false, showElement: "big-heart", iconTheme: "love" },
+      { text: "Và chiếc lá thứ tư chính là May Mắn vô tận mà tôi sẽ luôn bảo kê cho các cô 🌈🍀✨", bg: "radial-gradient(circle, #1a3d00 0%, #050505 100%)", eyeState: "blush", track: 2, pos: "bottom", showSky: false, showElement: "clover", iconTheme: "clover" },
+      
+      { text: "Chúc các cô từ nay về sau gặp toàn chuyện hanh thông, vạn sự như ý và bình an ❤️🍀✨🌈", bg: "radial-gradient(circle, #003d33 0%, #050505 100%)", eyeState: "heart", track: 2, pos: "top", showSky: true, showElement: "big-cake", iconTheme: "love" },
+      { text: "Hãy cứ tự tin sải bước và giữ vững vị trí những cô gái tỏa sáng nhất tập thể nhé 👸🏻💎💖", bg: "radial-gradient(circle, #33003d 0%, #050505 100%)", eyeState: "fire", track: 2, pos: "left", showSky: true, showElement: "big-gem", iconTheme: "star" },
+      { text: "Mong rằng thanh xuân của chúng ta sẽ không có chỗ cho sự hối tiếc 🌸✨", bg: "radial-gradient(circle, #1f003d 0%, #050505 100%)", eyeState: "sparkle", track: 2, pos: "right", showSky: true, showElement: "big-sparkle-flower", iconTheme: "flower" },
+      { text: "Cảm ơn các cô vì đã luôn là những mảnh ghép tuyệt vời và đáng yêu nhất của tập thể 9.11 🏫🎒🎉", bg: "radial-gradient(circle, #22003d 0%, #050505 100%)", eyeState: "happy", track: 2, pos: "top", showSky: true, showElement: "big-backpack", iconTheme: "flower" },
+      { text: "Mong rằng tình cảm gắn bó này sẽ còn theo chân chúng ta đi thật xa, thật lâu nữa 💫🤝", bg: "radial-gradient(circle, #001a3d 0%, #050505 100%)", eyeState: "heart", track: 2, pos: "bottom", showSky: true, showElement: "big-handshake", iconTheme: "love" },
+      { text: "Thôi được rồi, hội quý tử 9.11 đang gọi tôi về đi tuần rồi... Tạm biệt các tiểu thư nhé! 👋🏻✈️💨", bg: "radial-gradient(circle, #2b001a 0%, #050505 100%)", eyeState: "wink", track: 2, pos: "bottom", showSky: true, showElement: "big-wave", iconTheme: "love" },
+      
+      { text: "Hãy cứ cùng nhau sát cánh và đồng hành trên chặng đua nước rút cuối cùng này nhé 🤝🚀✨", bg: "radial-gradient(circle, #00223d 0%, #050505 100%)", eyeState: "star", track: 2, pos: "center", showSky: true, showElement: "big-rocket", flyPass: 1, zoomCenter: true },
+      { text: "Chúc tất cả các cậu sẽ hiên ngang bước vào ngôi trường cấp 3 mơ ước nha 🎓🏫🌟", bg: "radial-gradient(circle, #22003d 0%, #050505 100%)", eyeState: "heart", track: 2, pos: "center", showSky: true, showElement: "big-gradcap", flyPass: 2, zoomCenter: true },
+      
+      { text: "", bg: "radial-gradient(circle, #000000 0%, #000000 100%)", eyeState: "cool", track: 2, pos: "top", showSky: true, dropPhoto: true }
+    ];
+
+    const startBtn = document.getElementById('start-btn');
+    const mainContent = document.getElementById('main-content');
+    const textDisplay = document.getElementById('text-display');
+    const bgLayer1 = document.getElementById('bg-layer-1');
+    const bgLayer2 = document.getElementById('bg-layer-2');
+    const bgImageContainer = document.getElementById('bg-image-container');
+    const bgImage = document.getElementById('bg-image');
+    const dynamicElementWrapper = document.getElementById('dynamic-element-wrapper');
+    const dynamicAura = document.getElementById('dynamic-aura');
+    const dynamicContent = document.getElementById('dynamic-content');
+    const faceContainer = document.getElementById('face-container');
+    const eyeLeft = document.getElementById('eye-left');
+    const eyeRight = document.getElementById('eye-right');
+    const hintText = document.getElementById('hint-text');
+    const airplaneContainer = document.getElementById('airplane-container');
+    const classPhotoContainer = document.getElementById('class-photo-container');
+
+    let activeLayerIndex = 1;
+    let currentElementType = ""; 
+    let section2Started = false;
+
+    function transitionBgColor(newGradient) {
+      if (activeLayerIndex === 1) {
+        bgLayer2.style.background = newGradient;
+        bgLayer2.style.opacity = '1';
+        bgLayer1.style.opacity = '0';
+        activeLayerIndex = 2;
+      } else {
+        bgLayer1.style.background = newGradient;
+        bgLayer1.style.opacity = '1';
+        bgLayer2.style.opacity = '0';
+        activeLayerIndex = 1;
+      }
+    }
+
+    function setEyeState(state) {
+      eyeLeft.className = "eye left";
+      eyeRight.className = "eye right";
+      eyeLeft.innerHTML = '<div class="blush" id="blush-left">////</div>';
+      eyeRight.innerHTML = '<div class="blush" id="blush-right">////</div>';
+
+      if (state === "happy") {
+        eyeLeft.classList.add("happy");
+        eyeRight.classList.add("happy");
+      } else if (state === "blush") {
+        document.getElementById('blush-left').style.display = "block";
+        document.getElementById('blush-right').style.display = "block";
+        eyeLeft.classList.add("shy-animation", "blush-state");
+        eyeRight.classList.add("shy-animation", "blush-state");
+      } else if (state === "star") {
+        eyeLeft.classList.add("star");
+        eyeRight.classList.add("star");
+      } else if (state === "heart") {
+        eyeLeft.classList.add("heart");
+        eyeRight.classList.add("heart");
+        document.getElementById('blush-left').style.display = "block";
+        document.getElementById('blush-right').style.display = "block";
+      } else if (state === "wink") {
+        eyeLeft.classList.add("wink-left");
+        eyeRight.classList.add("star");
+      } else if (state === "surprised") {
+        eyeLeft.classList.add("surprised");
+        eyeRight.classList.add("surprised");
+      } else if (state === "dizzy") {
+        eyeLeft.classList.add("dizzy");
+        eyeRight.classList.add("dizzy");
+      } else if (state === "sparkle") {
+        eyeLeft.classList.add("sparkle");
+        eyeRight.classList.add("sparkle");
+      } else if (state === "cool") {
+        eyeLeft.classList.add("cool");
+        eyeRight.classList.add("cool");
+      } else if (state === "fire") {
+        eyeLeft.classList.add("fire");
+        eyeRight.classList.add("fire");
+      }
+    }
+
+    function triggerBlink() {
+      if (!isAnimating) return;
+      eyeLeft.classList.add('blink');
+      eyeRight.classList.add('blink');
+      setTimeout(() => {
+        eyeLeft.classList.remove('blink');
+        eyeRight.classList.remove('blink');
+      }, 180);
+    }
+
+    function dynamicEyeTransition(targetState, callback) {
+      eyeLeft.classList.add("blink");
+      eyeRight.classList.add("blink");
+      
+      setTimeout(() => {
+        eyeLeft.classList.remove("blink");
+        eyeRight.classList.remove("blink");
+        setEyeState(targetState);
+        if (callback) callback();
+      }, 200);
+    }
+
+    let hasBlinkedThisSentence = false;
+
+    function typeWriter(text, index = 0, speed = 32, cb) {
+      if (index === 0) {
+        textDisplay.innerHTML = "";
+        hasBlinkedThisSentence = false;
+      }
+      
+      const midPoint = Math.floor(text.length / 2);
+      if (!hasBlinkedThisSentence && index === midPoint && text.length > 5) {
+        hasBlinkedThisSentence = true;
+        triggerBlink();
+      }
+
+      if (index < text.length) {
+        textDisplay.innerHTML = text.substring(0, index + 1);
+        setTimeout(() => typeWriter(text, index + 1, speed, cb), speed);
+      } else if (cb) {
+        cb();
+      }
+    }
+
+    function updateLayout(pos, hasElement, zoomCenter) {
+      textDisplay.classList.remove('zoom-center');
+      textDisplay.style.top = "auto";
+      textDisplay.style.bottom = "auto";
+      textDisplay.style.left = "auto";
+      textDisplay.style.right = "auto";
+      textDisplay.style.transform = "none";
+      textDisplay.style.textAlign = "center";
+
+      if (zoomCenter) {
+        textDisplay.classList.add('zoom-center');
+        faceContainer.style.top = "78%";
+        faceContainer.style.left = "50%";
+        faceContainer.style.transform = "translate(-50%, -50%) scale(0.85)";
+        if (hasElement) {
+          dynamicElementWrapper.style.top = "22%";
+          dynamicElementWrapper.style.left = "50%";
+        }
+        return;
+      } else {
+        faceContainer.style.transform = "translate(-50%, -50%) scale(1)";
+      }
+
+      if (pos === "top") {
+        textDisplay.style.top = "15%";
+        textDisplay.style.left = "50%";
+        textDisplay.style.transform = "translateX(-50%)";
+        
+        faceContainer.style.top = "68%";
+        faceContainer.style.left = "50%";
+
+        if (hasElement) {
+          dynamicElementWrapper.style.top = "42%";
+          dynamicElementWrapper.style.left = "50%";
+        }
+      } else if (pos === "bottom") {
+        textDisplay.style.bottom = "15%";
+        textDisplay.style.left = "50%";
+        textDisplay.style.transform = "translateX(-50%)";
+        
+        if (hasElement) {
+          faceContainer.style.top = "30%";
+          dynamicElementWrapper.style.top = "54%";
+        } else {
+          faceContainer.style.top = "42%";
+        }
+        faceContainer.style.left = "50%";
+        dynamicElementWrapper.style.left = "50%";
+      } else if (pos === "center") {
+        textDisplay.style.top = "38%";
+        textDisplay.style.left = "50%";
+        textDisplay.style.transform = "translateX(-50%)";
+        
+        faceContainer.style.top = "62%";
+        faceContainer.style.left = "50%";
+
+        if (hasElement) {
+          dynamicElementWrapper.style.top = "50%";
+          dynamicElementWrapper.style.left = "50%";
+        }
+      } else if (pos === "left") {
+        textDisplay.style.top = "50%";
+        textDisplay.style.left = "10%";
+        textDisplay.style.transform = "translateY(-50%)";
+        textDisplay.style.textAlign = "left";
+        
+        faceContainer.style.top = "50%";
+        faceContainer.style.left = "75%";
+
+        if (hasElement) {
+          dynamicElementWrapper.style.top = "50%";
+          dynamicElementWrapper.style.left = "42%";
+        }
+      } else if (pos === "right") {
+        textDisplay.style.top = "50%";
+        textDisplay.style.right = "10%";
+        textDisplay.style.transform = "translateY(-50%)";
+        textDisplay.style.textAlign = "right";
+        
+        faceContainer.style.top = "50%";
+        faceContainer.style.left = "25%";
+
+        if (hasElement) {
+          dynamicElementWrapper.style.top = "50%";
+          dynamicElementWrapper.style.left = "58%";
+        }
+      }
+    }
+
+    let currentStep = 0;
+    let isAnimating = false;
+
+    function handleAudioManagement(track) {
+      if (track === 1) {
+        audio2.pause();
+        audio3.pause();
+        audio4.pause();
+        audio5.pause();
+        audio6.pause();
+        audio7.pause();
+        if (audio1.paused) {
+          audio1.currentTime = 0;
+          audio1.play().catch(e => console.log(e));
+        }
+      } else if (track === 2) {
+        audio1.pause();
+        if (!section2Started) {
+          section2Started = true;
+          audio2.currentTime = 0;
+          audio2.play().catch(e => console.log(e));
+        }
+      }
+    }
+
+    function buildElementHTML(type) {
+      dynamicAura.className = "";
+      dynamicContent.innerHTML = "";
+
+      if (type === "clover") {
+        dynamicAura.className = "aura-clover";
+        dynamicContent.innerHTML = `
+          <div id="big-clover">
+            <div class="clover-leaf"></div>
+            <div class="clover-leaf"></div>
+            <div class="clover-leaf"></div>
+            <div class="clover-leaf"></div>
+            <div class="clover-stem"></div>
+          </div>
+        `;
+      } else if (type === "big-crown") {
+        dynamicAura.className = "aura-gold";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">👑</div>`;
+      } else if (type === "big-contract") {
+        dynamicAura.className = "aura-purple";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">📋</div>`;
+      } else if (type === "big-flushed") {
+        dynamicAura.className = "aura-heart";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">😳</div>`;
+      } else if (type === "big-flower") {
+        dynamicAura.className = "aura-flower";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🌸</div>`;
+      } else if (type === "big-calendar") {
+        dynamicAura.className = "aura-rainbow";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">📅</div>`;
+      } else if (type === "big-cloud") {
+        dynamicAura.className = "aura-rainbow";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">☁️</div>`;
+      } else if (type === "big-speech") {
+        dynamicAura.className = "aura-star";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">💭</div>`;
+      } else if (type === "big-strong") {
+        dynamicAura.className = "aura-clover";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">💪</div>`;
+      } else if (type === "big-princess") {
+        dynamicAura.className = "aura-flower";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">👸</div>`;
+      } else if (type === "big-sun") {
+        dynamicAura.className = "aura-gold";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🌅</div>`;
+      } else if (type === "big-candy") {
+        dynamicAura.className = "aura-flower";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🍬</div>`;
+      } else if (type === "big-shield") {
+        dynamicAura.className = "aura-star";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🛡️</div>`;
+      } else if (type === "big-gift") {
+        dynamicAura.className = "aura-purple";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🎁</div>`;
+      } else if (type === "big-palms") {
+        dynamicAura.className = "aura-clover";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🤲</div>`;
+      } else if (type === "big-sprout") {
+        dynamicAura.className = "aura-clover";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🌿</div>`;
+      } else if (type === "big-star") {
+        dynamicAura.className = "aura-star";
+        dynamicContent.innerHTML = `<div class="custom-icon" style="color: #ffd700; text-shadow: 0 0 25px #ffaa00;">🌟</div>`;
+      } else if (type === "big-heart") {
+        dynamicAura.className = "aura-heart";
+        dynamicContent.innerHTML = `<div class="custom-icon" style="animation: heartBeat 0.8s infinite alternate ease-in-out;">❤️</div>`;
+      } else if (type === "big-cake") {
+        dynamicAura.className = "aura-gold";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🎂</div>`;
+      } else if (type === "big-gem") {
+        dynamicAura.className = "aura-purple";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">💎</div>`;
+      } else if (type === "big-sparkle-flower") {
+        dynamicAura.className = "aura-rainbow";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🌷</div>`;
+      } else if (type === "big-backpack") {
+        dynamicAura.className = "aura-rainbow";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🎒</div>`;
+      } else if (type === "big-handshake") {
+        dynamicAura.className = "aura-gold";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🤝</div>`;
+      } else if (type === "big-wave") {
+        dynamicAura.className = "aura-purple";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">👋</div>`;
+      } else if (type === "big-rocket") {
+        dynamicAura.className = "aura-star";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🚀</div>`;
+      } else if (type === "big-gradcap") {
+        dynamicAura.className = "aura-gold";
+        dynamicContent.innerHTML = `<div class="custom-icon bounce-icon">🎓</div>`;
+      }
+    }
+
+    function updateDynamicElement(newType) {
+      if (!newType) {
+        dynamicElementWrapper.classList.remove('hien-thi');
+        currentElementType = "";
+        return;
+      }
+
+      if (currentElementType && currentElementType !== newType) {
+        dynamicElementWrapper.classList.add('fade-out');
+        setTimeout(() => {
+          buildElementHTML(newType);
+          dynamicElementWrapper.classList.remove('fade-out');
+          dynamicElementWrapper.classList.add('hien-thi');
+          currentElementType = newType;
+        }, 300);
+      } else {
+        buildElementHTML(newType);
+        dynamicElementWrapper.classList.add('hien-thi');
+        currentElementType = newType;
+      }
+    }
+
+    function showStep() {
+      if (currentStep >= script.length) {
+        return;
+      }
+
+      isAnimating = true;
+      const step = script[currentStep];
+      
+      transitionBgColor(step.bg);
+      spawnFloatingIcons(step.iconTheme || "default", step.pos);
+
+      if (step.showSky) {
+        skyContainer.classList.add('hien-thi');
+      } else {
+        skyContainer.classList.remove('hien-thi');
+      }
+
+      if (step.img) {
+        bgImage.style.backgroundImage = `url('${step.img}')`;
+        bgImageContainer.classList.add('hien-thi');
+      } else {
+        bgImageContainer.classList.remove('hien-thi');
+      }
+
+      airplaneContainer.className = "";
+
+      if (step.flyPass === 1) {
+        airplaneContainer.style.top = "50%";
+        airplaneContainer.classList.add('fly-pass-1');
+      } else if (step.flyPass === 2) {
+        airplaneContainer.style.top = "50%";
+        airplaneContainer.classList.add('fly-pass-2');
+      }
+
+      if (step.dropPhoto) {
+        faceContainer.style.opacity = '0';
+        updateDynamicElement(null);
+        textDisplay.style.opacity = '0';
+        hintText.style.display = 'none';
+        airplaneContainer.style.top = "50%";
+        airplaneContainer.classList.add('fly-drop');
+        setTimeout(() => {
+          classPhotoContainer.classList.add('hien-thi');
+        }, 800);
+      } else {
+        faceContainer.style.opacity = '1';
+        updateLayout(step.pos, !!step.showElement, step.zoomCenter);
+        updateDynamicElement(step.showElement);
+      }
+
+      textDisplay.style.opacity = '1';
+      textDisplay.innerHTML = "";
+      
+      handleAudioManagement(step.track);
+
+      // Thiết lập tốc độ: Phần 1 (32ms), Phần 2 (60ms)
+      const typingSpeed = (step.track === 2) ? 60 : 32;
+
+      dynamicEyeTransition(step.eyeState, () => {
+        typeWriter(step.text, 0, typingSpeed, () => {
+          isAnimating = false;
+        });
+      });
+    }
+
+    startBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      startBtn.style.display = 'none';
+      mainContent.style.display = 'flex';
+      hintText.style.display = 'block';
+      
+      bgLayer1.style.background = script[0].bg;
+      showStep();
+    });
+
+    document.body.addEventListener('click', () => {
+      if (mainContent.style.display === 'flex' && !isAnimating && currentStep < script.length - 1) {
+        currentStep++;
+        showStep();
+      }
+    });
+  </script>
+</body>
+</html>
